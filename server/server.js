@@ -105,9 +105,24 @@ app.post('/users',(req,res)=>{
 app.get('/users/me',authenticate,(req,res)=>{
     res.send(req.user);
 });
+
+app.post('/users/login',(req,res)=>{
+    let body = _.pick(req.body,['email','password']);
+    User.findByCredentials(body.email,body.password).then((user)=>{
+        // res.send(user);
+        return user.generateAuthToken().then((token)=>{
+            res.header('x-auth',token).send(user); 
+        });
+    }).catch((e)=>{
+        res.status(400).send();
+    });
+});
+
 app.listen(port,()=>{
     console.log(`Started on port ${port}`)
 });
+
+
 
 module.exports = {app};
 
@@ -115,54 +130,3 @@ module.exports = {app};
 
 
 
-// let mongoose = require('mongoose');
-
-// mongoose.Promise = global.Promise;
-// // mongoose.Promise = Promise;
-// mongoose.connect('mongodb://localhost:27017/TodoApp');
-
-// let Todo = mongoose.model('Todo',{
-//     text:{
-//         type:String,
-//         required:true,
-//         minlength:1,
-//         trim:true
-//     },
-//     completed:{
-//         type:Boolean,
-//         default:false
-//     },
-//     completedAt:{
-//         type:Number,
-//         default:null
-//     }
-// });
-
-// // let newTodo = new Todo({
-// //     text: '   Somethings to do',
-// // });
-
-// // newTodo.save().then((doc)=>{
-// //     console.log(JSON.stringify(doc,undefined,2));
-// // },(e)=>{
-// //     console.log('Unable to save todo');
-// // });
-
-// let User = mongoose.model('User',{
-//     email:{
-//         type:String,
-//         required:true,
-//         trim:true,
-//         minlength:1
-//     }
-// });
-
-// let user = new User({
-//     email:'backtowind@qq.com'
-// });
-
-// user.save().then((doc)=>{
-//     console.log('User saved',doc);
-// },(e)=>{
-//     console.log('Unable to save user',e);
-// });
