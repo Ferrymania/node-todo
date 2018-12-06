@@ -4,7 +4,7 @@ let authenticate = (req,res,next) =>{
     let token = req.header('x-auth');
     User.findByToken(token).then((user)=>{
         if(!user){
-            // reres.status(401).send();
+            // res.status(401).send();
             return Promise.reject();
         }
         req.user = user;

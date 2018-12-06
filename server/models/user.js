@@ -79,7 +79,6 @@ UserSchema.pre('save',function (next) {
                 next();
             });
         });
-        console.log(user.password);
         
     } else{
         next();
